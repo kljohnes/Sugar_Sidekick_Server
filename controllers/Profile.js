@@ -11,27 +11,30 @@ const { Log, User, Profile } = require("../models");
 =====================================
 */
 router.post("/", validateJWT, async (req, res) => {
-    const { first_name, diaversary, dark_mode, userId } = req.body.profile;
-    const { owner } = req.body.user;
-    const { userId } = req.body.user.id
+    const { first_name, diaversary, dark_mode } = req.body.profile;
+    const  { id } = req.user
     const profileEntry = {
         first_name,
         diaversary,
         dark_mode,
-        userId: userId
+        userId: id
     }
     try {
-        const findProfile = {
-            where: {
-                userId: userId  
-            }
-        };
-        await Profile.findOne(findProfile)
-        if (findProfile) 
-        {  res.status(409).json({message: "You already have a profile."})}
-        else {const newProfile = await Profile.create(profileEntry);
-        res.status(200).json(newProfile);await User.setProfile(newProfile)} console.log(newProfile)
-        } catch (err) {
+
+/* Tried to create a check so that a user cannot create more than one profile but it didn't work correctly. Commented out below.*/
+        // const findProfile = {
+        //     where: {
+        //         userId: id 
+        //     }
+        // };
+        // await Profile.findOne(findProfile)
+        // if (findProfile) {  
+        //     res.status(409).json({message: "You already have a profile."})
+        // } else {
+        const newProfile = await Profile.create(profileEntry);
+        res.status(200).json(newProfile)
+        // }
+    } catch (err) {
      res.status(500).json({ error: err })
     }
     // JournalModel.create(journalEntry)
@@ -47,7 +50,7 @@ router.get("/mine", validateJWT, async (req, res) => {
     try {
         const userProfile = await Profile.findOne({
             where: {
-                owner: id
+                userId: id
             }
         });
         res.status(200).json(userProfile);
@@ -55,5 +58,69 @@ router.get("/mine", validateJWT, async (req, res) => {
         res.status(500).json({ error: err });
     }
 });
+
+// ========================
+// UPDATE A PROFILE
+// ========================
+// */
+router.put("/update/:id", validateJWT, async (req, res) => {
+    try {
+    userId = req.user.id;
+    profileId = req.params.id;
+    const { first_name, diaversary, dark_mode } = req.body.profile
+
+    const query = {
+        where: {
+            id: profileId,
+            userId: userId
+        }
+    }
+
+    const updatedProfile = {
+        first_name,
+        diaversary,
+        dark_mode
+    }
+
+    const profileUpdated = await Profile.update(updatedProfile, query)
+    if (profileUpdated) res.status(200).json({message: `Profile at id ${profileId} is now updated`, updatedProfile})
+    else {
+        res.status(404).json({
+            message: 'Profile not found in database'
+        })
+    }
+} catch (error) {
+    res.status(500).json({
+        message: `Error: ${error}`
+    })
+}
+})
+
+/*
+======================
+DELETE A PROFILE
+======================
+*/
+
+router.delete("/delete/:id", validateJWT, async (req, res) => {
+    const userId = req.user.id;
+    const profileId = req.params.id;
+
+    try {
+        const query = {
+            where: {
+                id: profileId,
+                userId: userId
+            }
+        };
+
+        await Profile.destroy(query);
+        res.status(200).json({ message: "Profile deleted "});
+    } catch (err) {
+        res.status(500).json({ error: err });
+    }
+})
+
+
 
 module.exports = router

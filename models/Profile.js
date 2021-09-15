@@ -12,13 +12,7 @@ module.exports = (sequelize, DataTypes) => {
         dark_mode: {
             type: DataTypes.BOOLEAN
         },
-        owner: {
-            type: DataTypes.INTEGER,
-            unique: true
-        },
-        userId: {
-            type: DataTypes.INTEGER
-        }
+       
     })
     return Profile
     }

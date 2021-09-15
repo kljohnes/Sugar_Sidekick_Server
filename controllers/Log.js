@@ -26,7 +26,7 @@ router.post("/create", validateJWT, async (req, res) => {
         correction_dose,
         long_acting_dose,
         notes,
-        owner: id
+        userId: id
     }
     try {
         const newLog = await Log.create(logEntry);
@@ -48,7 +48,7 @@ router.get("/mine", validateJWT, async (req, res) => {
     try {
         const userLogs = await Log.findAll({
             where: {
-                owner: id
+                userId: id
             }
         });
         res.status(200).json(userLogs);
@@ -90,7 +90,7 @@ router.put("/update/:entryId", validateJWT, async (req, res) => {
     const query = {
         where: {
             id: logId,
-            owner: userId
+           userId: userId
         }
     };
 
@@ -102,14 +102,17 @@ router.put("/update/:entryId", validateJWT, async (req, res) => {
         bolus,
         correction_dose,
         long_acting_dose,
-        notes,
-        owner: id
+        notes      
    };
 
     try {
         const update = await Log.update(updatedLog, query);
-        res.status(200).json(update);
-    } catch (err) {
+       if (update) res.status(200).json({
+           message: `Log at id ${logId} successfully updated`});
+    else {
+        res.status(404).json({
+            message: 'Log not found'})}
+        }catch (err) {
         res.status(500).json({ error: err });
     }
 });
@@ -120,14 +123,14 @@ DELETE A LOG
 ==========================
 */
 router.delete("/delete/:id", validateJWT, async (req, res) => {
-    const ownerId = req.user.id;
-    const LogId = req.params.id;
+    const userId = req.user.id;
+    const logId = req.params.id;
 
     try {
         const query = {
             where: {
-                id: LogId,
-                owner: ownerId
+                id: logId,
+                userId: userId
             }
         };
 

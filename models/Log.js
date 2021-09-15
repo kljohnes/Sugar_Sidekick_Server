@@ -35,9 +35,6 @@ const Log = sequelize.define("log", {
     notes: {
         type: DataTypes.STRING,
         allowNull: true
-    },
-   owner: {
-        type: DataTypes.INTEGER
     }
 });
 return Log

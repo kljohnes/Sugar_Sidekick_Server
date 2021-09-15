@@ -14,10 +14,11 @@ const Profile = DefineProfile(sequelize, DataTypes)
 // Define Associations
 User.hasMany(Log)
 Log.belongsTo(User)
+
 User.hasOne(Profile)
 Profile.belongsTo(User,{
     onDelete: "CASCADE",
-    foreignKey: 'userId'
+    foreignKey: {allowNull: false}
 })
 
 // Sync

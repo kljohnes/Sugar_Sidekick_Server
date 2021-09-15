@@ -4,6 +4,9 @@ let router = express.Router()
 const { User } = require('../models')
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcryptjs")
+require('dotenv').config()
+let validateJWT = require("../middleware/validate-jwt")
+
 
 router.post("/register", async (req, res) => {
     let { email, password } = req.body.user;
@@ -68,6 +71,37 @@ router.post("/login", async (req, res) => {
         })
     }
 });
+
+/*
+Attempting to add ability to update password - not finished
+*/
+
+// router.put("/update", validateJWT, async (req, res) => {
+//     let {  email, password } = req.body.user;
+//     const userId = req.user.id
+//    const query = {
+//        where: {
+//            userId: userId
+//        }
+//    }
+//    const updatedPass = {
+//        email,
+//        password
+//    }
+
+//    try{
+//        const updatePass = await User.update(updatedPass, query);
+//        if (updatePass) res.status(200).json({
+//            message: "Password successfully updated"
+//        })
+//     else { res.status(404).json({
+//         message: "Not updated"
+//     })}
+//    }catch(err) {
+//        res.status(500).json({error: err})
+
+//    }
+// });
 
 
 module.exports = router;
