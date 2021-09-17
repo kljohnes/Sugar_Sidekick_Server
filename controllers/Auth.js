@@ -6,14 +6,16 @@ const jwt = require("jsonwebtoken")
 const bcrypt = require("bcryptjs")
 require('dotenv').config()
 let validateJWT = require("../middleware/validate-jwt")
+let validateAdmin = require("../middleware/validate-admin")
 
-
+// POST  http://localhost:3000/auth/register -- Register User
 router.post("/register", async (req, res) => {
-    let { email, password } = req.body.user;
+    let { email, password, role } = req.body.user;
     try {
         const user = await User.create({
             email,
-            password: bcrypt.hashSync(password, 13)
+            password: bcrypt.hashSync(password, 13),
+            role
         });
 
         let token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: 60 * 60 * 24 })
@@ -72,36 +74,57 @@ router.post("/login", async (req, res) => {
     }
 });
 
-/*
-Attempting to add ability to update password - not finished
-*/
+//UPDATE A USER
 
-// router.put("/update", validateJWT, async (req, res) => {
-//     let {  email, password } = req.body.user;
-//     const userId = req.user.id
-//    const query = {
-//        where: {
-//            userId: userId
-//        }
-//    }
-//    const updatedPass = {
-//        email,
-//        password
-//    }
+router.put('/', validateJWT, (req, res) => {
+    const { email } = req.body.user
+    let userId = req.user.id;
+    const updateUser = {
+        email,
+        password: bcrypt.hashSync(req.body.user.password, 13)    }
 
-//    try{
-//        const updatePass = await User.update(updatedPass, query);
-//        if (updatePass) res.status(200).json({
-//            message: "Password successfully updated"
-//        })
-//     else { res.status(404).json({
-//         message: "Not updated"
-//     })}
-//    }catch(err) {
-//        res.status(500).json({error: err})
+    const query = { where: {id: userId}}
+    User.update(updateUser, query)
+    .then((user) => res.status(201).json({ message: `${user} successfully updated`}))
+    .catch((err) => res.status(500).json({ error: err}))
+})
 
-//    }
-// });
+//ADMIN ONLY - GET ALL USERS
+// GET   http://localhost:3000/auth/all
+
+router.get("/all", validateAdmin, async (req, res) => {
+    try {
+        const users = await User.findAll();
+        res.status(200).json(users)
+    }
+    catch (err) {
+        res.status(500).json({ error: err });
+    }
+});
+
+//ADMIN ONLY - UPDATE A USER, INCLUDING ROLE
+router.put('/:id', validateAdmin, (req, res) => {
+    const { email, role } = req.body.user
+    const userId = req.params.id
+    const updateUser = {
+        email,
+        role,
+        password: bcrypt.hashSync(req.body.user.password, 13)    }
+
+    const query = { where: {id: userId}}
+    User.update(updateUser, query)
+    .then((user) => res.status(201).json({ message: `${user} successfully updated`}))
+    .catch((err) => res.status(500).json({ error: err}))
+})
+
+//ADMIN ONLY - DELETE A USER
+router.delete('/:id', validateAdmin, (req, res) => {
+    const userId = req.params.id
+    const query = { where: {id: userId}}
+    User.destroy(query)
+    .then((user) => res.status(201).json({ message: `${user} successfully deleted.`}))
+    .catch((err) => res.status(500).json({ error: err}))
+})
 
 
 module.exports = router;

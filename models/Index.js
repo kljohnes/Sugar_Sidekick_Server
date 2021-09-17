@@ -6,10 +6,12 @@ const { DataTypes } = require('sequelize')
 const DefineUser = require('./User')
 const DefineLog = require('./Log')
 const DefineProfile = require('./Profile')
+const DefineScript = require('./Prescription')
 
 const User = DefineUser(sequelize, DataTypes) // Defines the model
 const Log = DefineLog(sequelize, DataTypes) // Defines the model
 const Profile = DefineProfile(sequelize, DataTypes)
+const Script = DefineScript(sequelize, DataTypes)
 
 // Define Associations
 User.hasMany(Log)
@@ -21,6 +23,9 @@ Profile.belongsTo(User,{
     foreignKey: {allowNull: false}
 })
 
+User.hasMany(Script)
+Script.belongsTo(User)
+
 // Sync
 syncDb(sequelize, {alter:true})
     
@@ -28,4 +33,4 @@ syncDb(sequelize, {alter:true})
    
 
 
-module.exports = { User, Log, Profile }
+module.exports = { User, Log, Profile, Script }

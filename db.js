@@ -1,3 +1,6 @@
+require('dotenv').config()
+
+
 const {Sequelize} = require("sequelize")
 
 
@@ -29,7 +32,7 @@ async function syncDb(sequelize, options){
 
 // const Sequelize = require('sequelize');
 
-const sequelize = new Sequelize("postgres://postgres:d4e725d0cb6e4b5ea16d3669e63b1e36@localhost:5432/sugar-sidekick");
+const sequelize = new Sequelize(`postgres://postgres:${process.env.DB_PASS}@localhost:5432/sugar-sidekick`);
 
 module.exports = {sequelize,
                     syncDb};

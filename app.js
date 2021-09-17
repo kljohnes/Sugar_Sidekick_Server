@@ -19,6 +19,9 @@ app.use(cors());
 
     const profile = require('./controllers/Profile')
     app.use('/profile', profile)
+
+    const script = require('./controllers/Prescription')
+    app.use('/script', script)
   
     app.listen(port, () => {
       console.log(`App listening at http://localhost:${port}`)

@@ -7,7 +7,7 @@ const { Log, User, Profile } = require("../models");
 
 /*
 =====================================
-    PROFILE CREATE - MINE
+    PROFILE CREATE 
 =====================================
 */
 router.post("/", validateJWT, async (req, res) => {
