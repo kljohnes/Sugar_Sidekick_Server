@@ -5,10 +5,6 @@ let validateJWT = require("../middleware/validate-jwt")
 const { Log, User } = require("../models");
 
 
-router.get('/practice', validateJWT, (req, res) => {
-    res.send("HIIIIIIIIIIIIII")
-});
-
 /*
 =====================================
     LOG CREATE
@@ -34,7 +30,7 @@ router.post("/create", validateJWT, async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err });
     }
-    // JournalModel.create(journalEntry)
+    
 });
 
 
@@ -122,9 +118,9 @@ router.put("/update/:entryId", validateJWT, async (req, res) => {
 DELETE A LOG
 ==========================
 */
-router.delete("/delete/:id", validateJWT, async (req, res) => {
+router.delete("/delete/:entryId", validateJWT, async (req, res) => {
     const userId = req.user.id;
-    const logId = req.params.id;
+    const logId = req.params.entryId;
 
     try {
         const query = {
@@ -134,9 +130,15 @@ router.delete("/delete/:id", validateJWT, async (req, res) => {
             }
         };
 
-        await Log.destroy(query);
+        let deleted = await Log.destroy(query);
+        if (deleted){
         res.status(200).json({ message: "Log Entry Removed "});
-    } catch (err) {
+    } else {
+        res.status(404).json({
+            message: "Log ID not found in database"
+        })
+    }
+} catch (err) {
         res.status(500).json({ error: err });
     }
 })

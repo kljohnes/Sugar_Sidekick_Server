@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       
         category: {
-            type: DataTypes.ENUM("insulin", "device", "other"),
+            type: DataTypes.STRING,
             allowNull: false
         },
         expiration: {
