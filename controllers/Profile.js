@@ -11,35 +11,58 @@ const { Log, User, Profile } = require("../models");
 =====================================
 */
 router.post("/", validateJWT, async (req, res) => {
-    const { first_name, diaversary, dark_mode } = req.body.profile;
-    const  { id } = req.user
-    const profileEntry = {
-        first_name,
-        diaversary,
-        dark_mode,
-        userId: id
+    const profileCheck = {
+        where: {
+            userId: req.user.id
+        }
     }
-    try {
+    Profile.findAll(profileCheck)
+    .then((results, err) => {
+        if (results.length === 0){
+            Profile.create({
+                first_name: req.body.profile.first_name,
+                diaversary: req.body.profile.diaversary,
+                location: req.body.profile.location
+            })
+                .then(
+                    function newProfile(profile){
+                        res.json({
+                            message: "Profile created.",
+                            profile: profile
+                        })
+                    }
 
-/* Tried to create a check so that a user cannot create more than one profile but it didn't work correctly. Commented out below.*/
-        // const findProfile = {
-        //     where: {
-        //         userId: id 
-        //     }
-        // };
-        // await Profile.findOne(findProfile)
-        // if (findProfile) {  
-        //     res.status(409).json({message: "You already have a profile."})
-        // } else {
-        const newProfile = await Profile.create(profileEntry);
-        res.status(200).json(newProfile)
-        // }
-    } catch (err) {
-     res.status(500).json({ error: err })
-    }
-    // JournalModel.create(journalEntry)
-});
+                )
+                .catch(err => res.status(500).json({error: err}))
+                } else {
+                    res.status(409).json({message: "You already have a profile. Please edit instead."})
+                } if (err) {
+                    console.log(err)
+                }  
+    }).catch((err) => res.status(500).json({message: "No information", error: err}))    
+})
 
+
+  
+//     const { first_name, diaversary, location } = req.body.profile;
+//     const  { id } = req.user
+//     const profileEntry = {
+//         first_name,
+//         diaversary,
+//         location,
+//         userId: id
+//     }
+//     try {
+//         const newProfile = await Profile.create(profileEntry);
+//         res.status(200).json(newProfile)
+//     } catch (err) {
+//      res.status(500).json({ err: err })
+//     }
+//  } else {
+//      res.status(409).json({ message: "You already have a profile. Please edit instead."})
+//  }
+// });
+// })
 /*
 ========================
 VIEW PROFILE BY USER
@@ -67,7 +90,7 @@ router.put("/update/:id", validateJWT, async (req, res) => {
     try {
     userId = req.user.id;
     profileId = req.params.id;
-    const { first_name, diaversary, dark_mode } = req.body.profile
+    const { first_name, diaversary, location } = req.body.profile
 
     const query = {
         where: {
@@ -79,7 +102,7 @@ router.put("/update/:id", validateJWT, async (req, res) => {
     const updatedProfile = {
         first_name,
         diaversary,
-        dark_mode
+        location
     }
 
     const profileUpdated = await Profile.update(updatedProfile, query)

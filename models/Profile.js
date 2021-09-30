@@ -9,8 +9,8 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        dark_mode: {
-            type: DataTypes.BOOLEAN
+        location: {
+            type: DataTypes.STRING
         },
        
     })
