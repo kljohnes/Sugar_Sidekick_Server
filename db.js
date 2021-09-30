@@ -27,12 +27,9 @@ async function syncDb(sequelize, options){
     }
 }
 
-
-// module.exports = sequelize
-
-// const Sequelize = require('sequelize');
-
-const sequelize = new Sequelize(`postgres://postgres:${process.env.DB_PASS}@localhost:5432/sugar-sidekick`);
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
+    dialect: 'postgres',
+});
 
 module.exports = {sequelize,
                     syncDb};

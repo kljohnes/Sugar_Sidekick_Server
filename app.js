@@ -2,7 +2,7 @@ require('dotenv').config()
 const express = require("express");
 const app = express();
 // const dbConnection = require('./db')
-const port = 3000
+
 
 const cors = require('cors');
 app.use(require('./middleware/headers'));
@@ -23,8 +23,8 @@ app.use(cors());
     const script = require('./controllers/Prescription')
     app.use('/script', script)
   
-    app.listen(port, () => {
-      console.log(`App listening at http://localhost:${port}`)
+    app.listen(process.env.PORT, () => {
+      console.log(`App listening on ${process.env.PORT}}`)
     })
   })()
 
