@@ -8,6 +8,7 @@ const DefineLog = require('./Log')
 const DefineProfile = require('./Profile')
 const DefineScript = require('./Prescription')
 
+// Making models
 const User = DefineUser(sequelize, DataTypes) // Defines the model
 const Log = DefineLog(sequelize, DataTypes) // Defines the model
 const Profile = DefineProfile(sequelize, DataTypes)
