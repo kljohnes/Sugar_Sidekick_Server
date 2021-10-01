@@ -28,7 +28,7 @@ User.hasMany(Script)
 Script.belongsTo(User)
 
 // Sync
-syncDb(sequelize, {alter:false})
+syncDb(sequelize, {alter:true})
     
     
    
