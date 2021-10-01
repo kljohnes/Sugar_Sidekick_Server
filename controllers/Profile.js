@@ -22,7 +22,8 @@ router.post("/", validateJWT, async (req, res) => {
             Profile.create({
                 first_name: req.body.profile.first_name,
                 diaversary: req.body.profile.diaversary,
-                location: req.body.profile.location
+                location: req.body.profile.location,
+                userId: req.user.id
             })
                 .then(
                     function newProfile(profile){
