@@ -27,7 +27,9 @@ async function syncDb(sequelize, options){
     }
 }
 
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
+const sequelize = new Sequelize(process.env.DATABASE_URL,
+    process.env.ENVIRONMENT === "local" ? {dialect: 'postgres'} : 
+     {
     dialect: 'postgres',
     dialectOptions: {
         ssl: {
