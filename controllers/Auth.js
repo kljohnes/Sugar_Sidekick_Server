@@ -1,7 +1,7 @@
 const { UniqueConstraintError } = require("sequelize/lib/errors")
 let express = require("express")
 let router = express.Router()
-const { User } = require('../models')
+const { User } = require('../models/Index')
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcryptjs")
 require('dotenv').config()

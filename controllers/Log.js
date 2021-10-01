@@ -2,7 +2,7 @@ const Express = require("express")
 const router = Express.Router()
 let validateJWT = require("../middleware/validate-jwt")
 
-const { Log, User } = require("../models");
+const { Log, User } = require("../models/Index");
 
 
 /*
